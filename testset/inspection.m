@@ -34,7 +34,7 @@ L = image_diff_tr * image_diff;
 [eig_vec, score, eig_val] = pca(L);
 % Large dimension eigen vector
 evec_ui= image_diff *eig_vec;
-% we set the no. of eigenface=10
+% we set the no. of eigenface=15
 num_eigenfaces = 15;
 evec_ui = evec_ui(:, 1:num_eigenfaces);
 
@@ -82,4 +82,4 @@ title(sprintf('matches %s, score %f', filenames(match_index).name, match_score))
 % normalised_evalues = evalues / sum(evalues);
 % figure, plot(cumsum(normalised_evalues));
 % xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
-% xlim([1 30]), ylim([0 1]), grid on;
+% xlim([1 15]), ylim([0 1]), grid on;
