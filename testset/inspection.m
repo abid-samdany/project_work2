@@ -73,13 +73,13 @@ title(sprintf('matches %s, score %f', filenames(match_index).name, match_score))
 % figure;
 % for n = 1:num_eigenfaces
 % subplot(2, ceil(num_eigenfaces/2), n);
-% evect = reshape(evec(:,n), image_dims);
+% evect = reshape(evec_ui(:,n), image_dims);
 % imagesc(evect);
 % colormap(gray); 
 % end
-% 
 % % display the eigenvalues
-% normalised_evalues = evalues / sum(evalues);
-% figure, plot(cumsum(normalised_evalues));
-% xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
-% xlim([1 30]), ylim([0 1]), grid on;
+normalised_evalues = eig_val / sum(eig_val);
+figure, plot(cumsum(normalised_evalues));
+figure, plot(normalised_evalues);
+xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
+xlim([1 15]), ylim([0 1]), grid on;
