@@ -35,7 +35,7 @@ L = image_diff_tr * image_diff;
 % Large dimension eigen vector
 evec_ui= image_diff *eig_vec;
 % we set the no. of eigenface=10
-num_eigenfaces = 15;
+num_eigenfaces = 10;
 evec_ui = evec_ui(:, 1:num_eigenfaces);
 
 % weight/ the feature vector calculation
@@ -69,17 +69,17 @@ colormap(gray);
 title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
 
 %%
-% % display the eigenvectors
-% figure;
-% for n = 1:num_eigenfaces
-% subplot(2, ceil(num_eigenfaces/2), n);
-% evect = reshape(evec_ui(:,n), image_dims);
-% imagesc(evect);
-% colormap(gray); 
-% end
-% % display the eigenvalues
+% display the eigenvectors
+figure;
+for n = 1:num_eigenfaces
+subplot(2, ceil(num_eigenfaces/2), n);
+evect = reshape(evec_ui(:,n), image_dims);
+imagesc(evect);
+colormap(gray); 
+end
+% display the eigenvalues
 normalised_evalues = eig_val / sum(eig_val);
 figure, plot(cumsum(normalised_evalues));
 figure, plot(normalised_evalues);
 xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
-xlim([1 15]), ylim([0 1]), grid on;
+xlim([1 10]), ylim([0 1]), grid on;
