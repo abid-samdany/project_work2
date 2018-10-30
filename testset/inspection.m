@@ -1,5 +1,5 @@
 % Input train image directory
-input_dir = 'G:\Test\ATT\';
+input_dir = 'G:\project_work2\ATT\';
 image_dims =[120, 104];
 
 filenames = dir(fullfile(input_dir, '*.png'));
@@ -33,19 +33,28 @@ L = image_diff_tr * image_diff;
 % eigen vector and value computation using Principle Component Analysis 
 [eig_vec, score, eig_val] = pca(L);
 % Large dimension eigen vector
-evec_ui= image_diff *eig_vec;
-
+% % evec_ui= image_diff *eig_vec;
 % we set the no. of eigenface=10
 num_eigenfaces = 10;
+limit=length(eig_val);
+for i=1:num_eigenfaces
+   evec_ui(:,i)=image_diff*eig_vec(:,i); 
+end
+
 evec_ui = evec_ui(:, 1:num_eigenfaces);
-
 % weight/ the feature vector calculation
-weights = evec_ui' * image_diff;
+% % weights = evec_ui' * image_diff;
 
+for i=1:num_images 
+    for j=1:num_eigenfaces
+        eig_ui_t=evec_ui(:,j)';
+        weights(j,i)=eig_ui_t*image_diff(:,i);
+    end
+end
 %%
 
 % input image for test
-input_img= imread('10_3.png');
+input_img= imread('1_1.png');
 % input_img = rgb2gray(input_img); 
 input_img = imresize(input_img,image_dims);
 
@@ -56,11 +65,11 @@ input_image_weight= evec_ui' * input_img_diff;
 
 % Euclidian distance between the input image and train images
 for n=1:num_images
-    distance(:,n)= 1 / (1+ norm( weights(:,n) - input_image_weight));
+    distance(:,n)= norm( weights(:,n) - input_image_weight);
 end
 
 % match image score and it's index
-[match_score, match_index] = max(distance);
+[match_score, match_index] = min(distance);
 
 % display the result
 figure();
