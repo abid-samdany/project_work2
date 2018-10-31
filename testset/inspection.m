@@ -31,19 +31,20 @@ end
 image_diff_tr= image_diff';
 L = image_diff_tr * image_diff;
 % eigen vector and value computation using Principle Component Analysis 
-[eig_vec, score, eig_val] = pca(L);
+% [eig_vec, score, eig_val] = pca(L);
+[eig_vec, score, eig_val] = eigs(L);
 % Large dimension eigen vector
-% % evec_ui= image_diff *eig_vec;
+%  evec_ui= image_diff *eig_vec;
 % we set the no. of k best eigen vector=7
-K_best_evec = 7;
-limit=length(eig_val);
+ K_best_evec = 5;
+% % limit=length(eig_val);
 for i=1:K_best_evec
    evec_ui(:,i)=image_diff*eig_vec(:,i); 
 end
 
 evec_ui = evec_ui(:, 1:K_best_evec);
 % weight/ the feature vector calculation
-% % weights = evec_ui' * image_diff;
+%  weights = evec_ui' * image_diff;
 
 for i=1:num_images 
     for j=1:K_best_evec
