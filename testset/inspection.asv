@@ -54,9 +54,7 @@ end
 %%
 
 % input image for test
-[file, path]= uigetfile({'*.png'},'input image');
-fullpath=strcat(path, file);
-input_img= imread(fullpath);
+input_img= imread('8.png');
 % input_img = rgb2gray(input_img); 
 input_img = imresize(input_img,image_dims);
 
@@ -80,6 +78,7 @@ end
 % display the result
 figure();
 imshow([input_img ,reshape(images(:,match_index), image_dims)]);
+
 colormap(gray);
 title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
 
