@@ -1,6 +1,6 @@
 % Face detection and cropped for train image set
 
-img_dir = 'G:\Test\facesr\';
+img_dir = 'G:\project_work2\FaceSrc\';
 filenames = dir(fullfile(img_dir, '*.jpg'));
 num_images = length(filenames);
 Fdetector = vision.CascadeObjectDetector;
@@ -10,14 +10,14 @@ for n = 1:num_images
     img = imread(filename);
     BB = step(Fdetector, img);
     face_img= imcrop(img,BB);
-    input_dir= strcat('G:\Test\face_cropped\',filenames(n).name);
+    input_dir= strcat('G:\project_work2\Face_cropped\',filenames(n).name);
     imwrite(face_img, input_dir);
 end
 
 %%
 
 % Input train image directory
-input_dir = 'G:\Test\face_cropped\';
+input_dir = 'G:\project_work2\Face_cropped\';
 image_dims =[120, 104];
 
 filenames = dir(fullfile(input_dir, '*.jpg'));
@@ -52,9 +52,9 @@ L = image_diff_tr * image_diff;
 [eig_vec, score, eig_val] = pca(L);
 % Large dimension eigen vector
 evec_ui= image_diff *eig_vec;
-% we set the no. of k best eigen vector=10
-num_eigenfaces = 15;
-evec_ui = evec_ui(:, 1:num_eigenfaces);
+% we set the no. of k best eigen vector=7
+K_best_evec = 7;
+evec_ui = evec_ui(:, 1:K_best_evec);
 
 % weight/ the feature vector calculation
 weights = evec_ui' * image_diff;
@@ -62,7 +62,9 @@ weights = evec_ui' * image_diff;
 %%
 
 % input image for test
-input_img= imread('image_0142.jpg');
+[file, path]= uigetfile({'*.jpg'},'Select test image');
+fullpath=strcat(path, file);
+input_img= imread(fullpath);
 Fdetector = vision.CascadeObjectDetector;
 Fdetector.MergeThreshold = 25;
 BBox = step(Fdetector, input_img);
