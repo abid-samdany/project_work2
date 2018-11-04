@@ -57,10 +57,10 @@ L = image_diff_tr * image_diff;
 K_best_evec = 6; 
 limit=length(eig_val);
 
-for i=1:limit
+for i=1:K_best_evec
    evec_ui(:,i)=image_diff*eig_vec(:,i); 
 end
-evec_ui = evec_ui(:, 1:K_best_evec);
+
 % weight/ the feature vector calculation
 % weights = evec_ui' * image_diff;
 for i=1:num_images 
@@ -69,7 +69,6 @@ for i=1:num_images
         weights(j,i)=eig_ui_t*image_diff(:,i);
     end
 end
-%%
 
 % input image for test
 [file, path]= uigetfile({'*.jpg'},'Select test image');
@@ -89,12 +88,12 @@ input_image_weight= evec_ui' * input_img_diff;
 
 % Euclidian distance between the input image and train images
 for n=1:num_images
-    distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
-%     distance(:,n)= norm( weights(:,n) - input_image_weight);    
+%     distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
+    distance(:,n)= norm( weights(:,n) - input_image_weight);    
 end
 
 % match image score and it's index
-[match_score, match_index] = max(distance);
+[match_score, match_index] = min(distance);
 
 % display the result
 figure();

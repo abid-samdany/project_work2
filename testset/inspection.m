@@ -1,6 +1,6 @@
 % Input train image directory
 input_dir = 'G:\project_work2\ATT\';
-image_dims =[120, 104];
+image_dims =[112, 92];
 
 filenames = dir(fullfile(input_dir, '*.png'));
 num_images = length(filenames);
@@ -31,18 +31,17 @@ end
 image_diff_tr= image_diff';
 L = image_diff_tr * image_diff;
 % eigen vector and value computation using Principle Component Analysis 
-% [eig_vec, score, eig_val] = pca(L);
-[eig_vec, score, eig_val] = eigs(L);
+[eig_vec, score, eig_val] = pca(L);
+% [eig_vec, eig_val] = eigs(L);
 % Large dimension eigen vector
 %  evec_ui= image_diff *eig_vec;
 % we set the no. of k best eigen vector=7
- K_best_evec = 5;
-% % limit=length(eig_val);
-for i=1:K_best_evec
+  K_best_evec = 7;
+ limit=length(eig_val);
+for i=1:K_best_evec 
    evec_ui(:,i)=image_diff*eig_vec(:,i); 
 end
 
-evec_ui = evec_ui(:, 1:K_best_evec);
 % weight/ the feature vector calculation
 %  weights = evec_ui' * image_diff;
 
