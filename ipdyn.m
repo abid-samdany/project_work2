@@ -1,6 +1,33 @@
+% Face detection and cropped for train image set
+
+img_dir = 'G:\project_work2\rimset\';
+filenames = dir(fullfile(img_dir, '*.jpg'));
+num_images = length(filenames);
+Fdetector = vision.CascadeObjectDetector;
+Fdetector.MergeThreshold = 25;
+image_dims =[112, 92 ];
+
+for n = 1:num_images
+    filename = fullfile(img_dir, filenames(n).name);
+    img = imread(filename);
+    img = rgb2gray(img);
+    
+    BB = step(Fdetector, img);
+    if(size(BB)>=1)
+        BB = step(Fdetector, img);
+        face_img= imcrop(img,BB);     
+        imgr = imresize(face_img,image_dims);
+        input_dir= strcat('G:\project_work2\Face_cropped\',filenames(n).name);
+        imwrite(imgr, input_dir);
+   end
+
+    
+end
+
+%%
 % Input train image directory
-input_dir = 'G:\project_work2\rimset\';
-image_dims =[112, 92];
+input_dir = 'G:\project_work2\Face_cropped\';
+image_dims =[112, 92 ];
 
 filenames = dir(fullfile(input_dir, '*.jpg'));
 num_images = length(filenames);
@@ -10,9 +37,7 @@ images = [];
 for n = 1:num_images
     filename = fullfile(input_dir, filenames(n).name);
     img = imread(filename);
-    img = rgb2gray(img); 
     img = im2double(img);
-    img = imresize(img,image_dims);
     images(:,n) = img(:);
 end
 
@@ -32,46 +57,45 @@ image_diff_tr= image_diff';
 L = image_diff_tr * image_diff;
 % eigen vector and value computation using Principle Component Analysis 
 [eig_vec, score, eig_val] = pca(L);
-% [eig_vec, eig_val] = eigs(L);
 % Large dimension eigen vector
-%  evec_ui= image_diff *eig_vec;
-% we set the no. of k best eigen vector=7
-  K_best_evec = 7;
- limit=length(eig_val);
-for i=1:K_best_evec 
+% evec_ui= image_diff *eig_vec;
+% we set the no. of k best eigen vector=6
+K_best_evec = 6; 
+limit=length(eig_val);
+
+for i=1:K_best_evec
    evec_ui(:,i)=image_diff*eig_vec(:,i); 
 end
 
 % weight/ the feature vector calculation
-%  weights = evec_ui' * image_diff;
-
+% weights = evec_ui' * image_diff;
 for i=1:num_images 
     for j=1:K_best_evec
         eig_ui_t=evec_ui(:,j)';
         weights(j,i)=eig_ui_t*image_diff(:,i);
     end
 end
-%%
 
 % input image for test
-[file, path]= uigetfile({'*.jpg'},'input image');
+[file, path]= uigetfile({'*.jpg'},'Select test image');
 fullpath=strcat(path, file);
 input_img= imread(fullpath);
-input_img = rgb2gray(input_img); 
+input_img = rgb2gray(input_img);
+Fdetector = vision.CascadeObjectDetector;
+Fdetector.MergeThreshold = 10;
+BBox = step(Fdetector, input_img);
+input_img= imcrop(input_img, BBox); 
 input_img = imresize(input_img,image_dims);
 
 % input image difference and input image weight
 input_img = im2double(input_img);
 input_img_diff= input_img(:)- mean_face;
 input_image_weight= evec_ui' * input_img_diff;
-% for i=1:K_best_evec
-% %     eig_ui_tt=evec_ui(:,i)';
-% %     input_image_weight(i,:)= eig_ui_tt*input_img_diff;
-% %      input_image_weight=evec_ui' * input_img_diff;
-% end
+
 % Euclidian distance between the input image and train images
 for n=1:num_images
-    distance(:,n)= norm( weights(:,n) - input_image_weight);
+%     distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
+    distance(:,n)= norm( weights(:,n) - input_image_weight);    
 end
 
 % match image score and it's index
@@ -83,20 +107,8 @@ imshow([input_img ,reshape(images(:,match_index), image_dims)]);
 colormap(gray);
 title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
 
-%%
-% % display the eigenvectors
-% figure;
-% for n = 1:num_eigenfaces
-% subplot(2, ceil(num_eigenfaces/2), n);
-% evect = reshape(evec_ui(:,n), image_dims);
-% imagesc(evect);
-% colormap(gray); 
-% end
-% % display the eigenvalues
-% normalised_evalues = eig_val / sum(eig_val);
-% figure, plot(cumsum(normalised_evalues));
-% figure, plot(normalised_evalues);
-% xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
-% xlim([1 10]), ylim([0 1]), grid on;
-
-
+% input_img;
+% [file, path]= uigetfile({'*.png'},'input image');
+% fullpath=strcat(path, file);
+% i=imread(fullpath);
+% imshow(i);

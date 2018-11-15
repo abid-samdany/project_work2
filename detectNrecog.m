@@ -1,6 +1,6 @@
 % Face detection and cropped for train image set
 
-img_dir = 'G:\project_work2\FaceSrc\';
+img_dir = 'G:\project_work2\rimset\';
 filenames = dir(fullfile(img_dir, '*.jpg'));
 num_images = length(filenames);
 Fdetector = vision.CascadeObjectDetector;
