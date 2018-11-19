@@ -5,7 +5,7 @@ filenames = dir(fullfile(img_dir, '*.jpg'));
 num_images = length(filenames);
 Fdetector = vision.CascadeObjectDetector;
 Fdetector.MergeThreshold = 25;
-image_dims =[120, 104];
+image_dims =[112, 92];
 for n = 1:num_images
     filename = fullfile(img_dir, filenames(n).name);
     img = imread(filename);
@@ -21,7 +21,7 @@ end
 
 % Input train image directory
 input_dir = 'G:\project_work2\Face_cropped\';
-image_dims =[120, 104];
+image_dims =[112, 92];
 
 filenames = dir(fullfile(input_dir, '*.jpg'));
 num_images = length(filenames);
