@@ -11,7 +11,6 @@ for n = 1:num_images
     filename = fullfile(img_dir, filenames(n).name);
     img = imread(filename);
     img = rgb2gray(img);
-    
     BB = step(Fdetector, img);
     if(size(BB)>=1)
         BB = step(Fdetector, img);
@@ -20,7 +19,6 @@ for n = 1:num_images
         input_dir= strcat('G:\project_work2\Face_cropped\',filenames(n).name);
         imwrite(imgr, input_dir);
    end
-
     
 end
 
