@@ -35,7 +35,7 @@ L = image_diff_tr * image_diff;
 % Large dimension eigen vector
 % evec_ui= image_diff *eig_vec;
 % we set the no. of k best eigen vector=6
-K_best_evec = 6; 
+K_best_evec = 10; 
 limit=length(eig_val);
 
 for i=1:K_best_evec
@@ -60,8 +60,7 @@ Fdetector = vision.CascadeObjectDetector;
 Fdetector.MergeThreshold = 10;
 BBox = step(Fdetector, input_img);
 input_img= imcrop(input_img, BBox);
-% input_img= histeq(input_img);
-input_img= medfilt2(input_img);
+input_img= histeq(input_img);
 input_img = imresize(input_img,image_dims);
 
 % input image difference and input image weight
@@ -71,8 +70,8 @@ input_image_weight= evec_ui' * input_img_diff;
 
 % Euclidian distance between the input image and train images
 for n=1:num_images
-%     distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
-    distance(:,n)= norm( weights(:,n) - input_image_weight);    
+%      distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
+      distance(:,n)= norm( weights(:,n) - input_image_weight);    
 end
 
 % match image score and it's index
@@ -83,3 +82,20 @@ figure();
 imshow([input_img ,reshape(images(:,match_index), image_dims)]);
 colormap(gray);
 title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
+
+ % display the eigenvectors
+
+figure
+
+for n = 1:K_best_evec
+subplot(2, ceil(K_best_evec/2), n);
+eig_vect = reshape(evec_ui(:,n), image_dims);
+imagesc(eig_vect);
+colormap(gray); 
+end
+
+ % display the eigenvalues
+normalised_evalues = eig_val / sum(eig_val);
+figure, plot(cumsum(normalised_evalues));
+xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
+xlim([1 40]), ylim([0 1]), grid on;
