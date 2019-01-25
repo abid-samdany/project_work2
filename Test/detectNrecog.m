@@ -1,6 +1,6 @@
 % Input train image directory
 
-input_dir = 'G:\Test\face_cropped\';
+input_dir = 'G:\project_work2\face-crop\';
 image_dims =[112, 92 ];
 
 filenames = dir(fullfile(input_dir, '*.jpg'));
@@ -55,11 +55,12 @@ end
 [file, path]= uigetfile({'*.jpg'},'Select test image');
 fullpath=strcat(path, file);
 input_img= imread(fullpath);
-input_img = rgb2gray(input_img);
+
 Fdetector = vision.CascadeObjectDetector;
 Fdetector.MergeThreshold = 10;
 BBox = step(Fdetector, input_img);
 input_img= imcrop(input_img, BBox);
+input_img = rgb2gray(input_img);
 input_img= histeq(input_img);
 input_img = imresize(input_img,image_dims);
 
@@ -83,19 +84,18 @@ imshow([input_img ,reshape(images(:,match_index), image_dims)]);
 colormap(gray);
 title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
 
- % display the eigenvectors
-
-figure
-
-for n = 1:K_best_evec
-subplot(2, ceil(K_best_evec/2), n);
-eig_vect = reshape(evec_ui(:,n), image_dims);
-imagesc(eig_vect);
-colormap(gray); 
-end
-
- % display the eigenvalues
-normalised_evalues = eig_val / sum(eig_val);
-figure, plot(cumsum(normalised_evalues));
-xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
-xlim([1 40]), ylim([0 1]), grid on;
+% % display the eigenvectors
+% 
+% figure
+% for n = 1:K_best_evec
+% subplot(2, ceil(K_best_evec/2), n);
+% eig_vect = reshape(evec_ui(:,n), image_dims);
+% imagesc(eig_vect);
+% colormap(gray); 
+% end
+%  
+% % display the eigenvalues
+% normalised_evalues = eig_val / sum(eig_val);
+% figure, plot(cumsum(normalised_evalues));
+% xlabel('No. of eigenvectors'), ylabel('Variance accounted for');
+% xlim([1 40]), ylim([0 1]), grid on;
