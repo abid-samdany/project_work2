@@ -1,6 +1,6 @@
 % Input train image directory
 
-input_dir = 'G:\project_work2\face-crop\';
+input_dir = 'G:\Test\face_cropped\';
 image_dims =[112, 92 ];
 
 filenames = dir(fullfile(input_dir, '*.jpg'));
@@ -51,38 +51,78 @@ for i=1:num_images
     end
 end
 
-% input image for test
-[file, path]= uigetfile({'*.jpg'},'Select test image');
-fullpath=strcat(path, file);
-input_img= imread(fullpath);
 
-Fdetector = vision.CascadeObjectDetector;
-Fdetector.MergeThreshold = 10;
-BBox = step(Fdetector, input_img);
-input_img= imcrop(input_img, BBox);
-input_img = rgb2gray(input_img);
-input_img= histeq(input_img);
-input_img = imresize(input_img,image_dims);
 
-% input image difference and input image weight
-input_img = im2double(input_img);
-input_img_diff= input_img(:)- mean_face;
-input_image_weight= evec_ui' * input_img_diff;
+test_dir = 'G:\Test\testset\';
+image_dims =[112, 92];
 
-% Euclidian distance between the input image and train images
-for n=1:num_images
-%      distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
-      distance(:,n)= norm( weights(:,n) - input_image_weight);    
+files = dir(fullfile(test_dir, '*.jpg'));
+test_imgs = length(files);
+
+for n = 1:test_imgs
+    tfile = fullfile(test_dir, files(n).name);
+    img = imread(tfile);
+
+    Fdetector = vision.CascadeObjectDetector;
+    Fdetector.MergeThreshold = 10;
+    BBox = step(Fdetector, img);
+    input_img= imcrop(img, BBox);
+    input_img = rgb2gray(input_img);
+    input_img= medfilt2(input_img);
+    input_img = imresize(input_img,image_dims);
+
+    input_img = im2double(input_img);
+    input_img_diff= input_img(:)- mean_face;
+    input_image_weight= evec_ui' * input_img_diff;
+    
+    
+    for i=1:num_images
+        distance(:,i)= norm(input_image_weight - weights(:,i));
+    end
+    
+    [match_score, match_index] = min(distance);
+    
+    figure();
+    imshow([input_img ,reshape(images(:,match_index), image_dims)]);
+    title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
+
+
 end
 
-% match image score and it's index
-[match_score, match_index] = min(distance);
 
-% display the result
-figure();
-imshow([input_img ,reshape(images(:,match_index), image_dims)]);
-colormap(gray);
-title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
+
+% % input image for test
+% [file, path]= uigetfile({'*.jpg'},'Select test image');
+% fullpath=strcat(path, file);
+% input_img= imread(fullpath);
+% 
+% Fdetector = vision.CascadeObjectDetector;
+% Fdetector.MergeThreshold = 10;
+% BBox = step(Fdetector, input_img);
+% input_img= imcrop(input_img, BBox);
+% input_img = rgb2gray(input_img);
+% input_img= histeq(input_img);
+% input_img = imresize(input_img,image_dims);
+% 
+% % input image difference and input image weight
+% input_img = im2double(input_img);
+% input_img_diff= input_img(:)- mean_face;
+% input_image_weight= evec_ui' * input_img_diff;
+% 
+% % Euclidian distance between the input image and train images
+% for n=1:num_images
+% %      distance(:,n)= 1/(1 + norm( input_image_weight - weights(:,n)));
+%       distance(:,n)= norm( weights(:,n) - input_image_weight);    
+% end
+% 
+% % match image score and it's index
+% [match_score, match_index] = min(distance);
+% 
+% % display the result
+% figure();
+% imshow([input_img ,reshape(images(:,match_index), image_dims)]);
+% colormap(gray);
+% title(sprintf('matches %s, score %f', filenames(match_index).name, match_score));
 
 % % display the eigenvectors
 % 

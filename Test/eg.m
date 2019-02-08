@@ -1,6 +1,6 @@
 % Face detection and cropped for train image set
 
-img_dir = 'G:\project_work2\trainset\';
+img_dir = 'C:\Users\MyPC\Desktop\imageset\Aberd\';
 filenames = dir(fullfile(img_dir, '*.jpg'));
 num_images = length(filenames);
 Fdetector = vision.CascadeObjectDetector;
@@ -18,7 +18,7 @@ for n = 1:num_images
         img= imcrop(img,BB);
         img= histeq(img);        
         img = imresize(img,image_dims);       
-        input_dir= strcat('G:\project_work2\face-crop\',filenames(n).name);
+        input_dir= strcat('C:\Users\MyPC\Desktop\imageset\abrd-crop\',filenames(n).name);
         imwrite(img, input_dir);
    end
     
